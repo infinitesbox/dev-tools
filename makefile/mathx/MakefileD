@@ -1,0 +1,43 @@
+# Simple makefile - Dynamic Library
+# make -f MakefileD
+
+# Couleurs ANSI
+COLOR_RESET := \033[0m
+COLOR_YELLOW := \033[33m
+
+CC := clang
+# Compiler flags
+FLAGS := -Wall -Wextra -Werror
+NAME := libmathx.so
+SRCS := mathx.c
+OBJS := $(SRCS:.c=.o)
+
+# Rule "all" to build the dynamic library
+all: $(NAME)
+	@echo "$(COLOR_YELLOW)Build complete: $(NAME)$(COLOR_RESET)"
+
+# Rule to create the dynamic library
+$(NAME): $(OBJS)
+	@$(CC) -shared -o $(NAME) $(OBJS)
+	@echo "$(COLOR_YELLOW)Creating dynamic library: $(NAME)$(COLOR_RESET)"
+
+# Rule to compile object files
+%.o: %.c math.h
+	@$(CC) $(FLAGS) -fPIC -c $< -o $@
+	@echo "$(COLOR_YELLOW)Compiling $<.$(COLOR_RESET)"
+
+# Rule "clean" to clean object files
+clean:
+	@rm -f $(OBJS)
+	@echo "$(COLOR_YELLOW)Cleaned up object files and temporary directories.$(COLOR_RESET)"
+
+# Rule "fclean" to clean all generated files
+fclean: clean
+	@rm -f $(NAME)
+	@echo "$(COLOR_YELLOW)Cleaned up all generated files, including the dynamic library.$(COLOR_RESET)"
+
+# Rule to clean and rebuild the dynamic library
+re: fclean all
+	@echo "$(COLOR_YELLOW)Rebuild complete: $(NAME)$(COLOR_RESET)"
+
+.PHONY: all clean fclean re
